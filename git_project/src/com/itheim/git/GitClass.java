@@ -12,6 +12,9 @@ public class GitClass {
         System.out.println("hello git project");
         System.out.println("hello git project");
     }
+    public void test() {
+        int i = 0;
+    }
 
 
 }
