@@ -8,7 +8,7 @@
   <artifactId>pinyougou-shop-web</artifactId>
   <packaging>war</packaging>
   
-    <dependencies>
+  <dependencies>
     <!-- Spring -->
 	<dependency>
 		<groupId>org.springframework</groupId>
@@ -107,10 +107,10 @@
 		<artifactId>pinyougou-common</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</dependency>
-    </dependencies>
+   </dependencies>
   
   
-    <build>  
+   <build>  
 	  <plugins>
 	      <plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
@@ -124,6 +124,6 @@
 				</configuration>
 	  	  </plugin>
 	  </plugins>  
-    </build>
+   </build>
   
 </project>
