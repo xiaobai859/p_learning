@@ -12,10 +12,11 @@
 		<link rel="stylesheet" type="text/css" href="css/widget-cartPanelView.css" />
 		
 		<script type="text/javascript" src="plugins/angularjs/angular.min.js"></script>
-
-		<script src="js/base.js"></script>
-		<script src="js/service/searchService.js"></script>
-		<script src="js/controller/searchController.js"></script>		
+		
+		<script type="text/javascript" src="js/base.js">  </script>
+		<script type="text/javascript" src="js/service/searchService.js">  </script>
+		<script type="text/javascript" src="js/controller/searchController.js">  </script> 
+				
 		
 	</head>
 
@@ -365,10 +366,9 @@
 									<strong>
 											<em>¥</em>
 											<i>{{item.price}}</i>
-										</strong>
+										</strong> 
 								</div>
-								<div class="attr">
-									<em>{{item.title}}</em>
+								<div class="attr" ng-bind-html="item.title | trustHtml">
 								</div>
 								<div class="cu">
 									<em></em>
