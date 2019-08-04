@@ -2,6 +2,7 @@ package com.pinyougou.search.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -11,13 +12,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.Crotch;
+import org.springframework.data.solr.core.query.FilterQuery;
 import org.springframework.data.solr.core.query.GroupOptions;
 import org.springframework.data.solr.core.query.HighlightOptions;
 import org.springframework.data.solr.core.query.HighlightQuery;
 import org.springframework.data.solr.core.query.Query;
+import org.springframework.data.solr.core.query.SimpleFilterQuery;
 import org.springframework.data.solr.core.query.SimpleHighlightQuery;
 import org.springframework.data.solr.core.query.SimpleQuery;
-import org.springframework.data.solr.core.query.SolrDataQuery;
 import org.springframework.data.solr.core.query.result.GroupEntry;
 import org.springframework.data.solr.core.query.result.GroupPage;
 import org.springframework.data.solr.core.query.result.GroupResult;
@@ -46,9 +48,15 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 		List<String> categoryList = searchCategoryList(searchMap);
 		map.put("categoryList", categoryList);
 		// 查询品牌和规格列表
-		if(categoryList.size() > 0) {
-			map.putAll(searchBrandAndSpecList(categoryList.get(0)));		
+		String category = (String) searchMap.get("category");
+		if(!"".equals(category)) { // 用户选择了商品分类
+			map.putAll(searchBrandAndSpecList(category));
+		} else {
+			if(categoryList.size() > 0) {
+				map.putAll(searchBrandAndSpecList(categoryList.get(0)));		
+			}
 		}
+		
 		return map;
 	}
 	
@@ -85,7 +93,51 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 		query.setHighlightOptions(highlightOptions); 
 		// 添加查询条件
 		Criteria criteria = new Criteria("item_keywords").is(searchMap.get("keywords"));
-		SolrDataQuery addCriteria = query.addCriteria(criteria);
+		query.addCriteria(criteria);
+	// 在查询高亮显示前添加搜索项
+		
+		// 按照商品分类过滤
+		if(!"".equals(searchMap.get("category"))) {
+			Criteria filterCriteria = new Criteria("item_category").is(searchMap.get("category"));
+			FilterQuery filterQuery = new SimpleFilterQuery(filterCriteria);
+			query.addFilterQuery(filterQuery );
+		}
+		
+		// 按照品牌过滤
+		if(!"".equals(searchMap.get("brand"))) {
+			Criteria filterCriteria = new Criteria("item_brand").is(searchMap.get("brand"));
+			FilterQuery filterQuery = new SimpleFilterQuery(filterCriteria);
+			query.addFilterQuery(filterQuery );
+		}
+		
+		// 按照规格过滤
+		if(searchMap.get("spec") != null) {
+			Map<String, String> specMap = (Map<String, String>) searchMap.get("spec");
+			for( String key : specMap.keySet()) {
+				Criteria filterCriteria = new Criteria("item_spec_" + key).is(specMap.get(key));
+				FilterQuery filterQuery = new SimpleFilterQuery(filterCriteria);
+				query.addFilterQuery(filterQuery );
+			}
+		}
+		
+		// 按照价格区间过滤
+		if(!"".equals(searchMap.get("price"))) { 
+			String priceStr = (String) searchMap.get("price");
+			String[] price = priceStr.split("-");
+			if(!"0".equals(price[0])) { // 最低价格不为0
+				Criteria filterCriteria = new Criteria("item_price").greaterThanEqual(price[0]);
+				FilterQuery filterQuery = new SimpleFilterQuery(filterCriteria);
+				query.addFilterQuery(filterQuery );
+			}
+			if(!"*".equals(price[1])) { // 最高价格不为*
+				Criteria filterCriteria = new Criteria("item_price").lessThanEqual(price[1]);
+				FilterQuery filterQuery = new SimpleFilterQuery(filterCriteria);
+				query.addFilterQuery(filterQuery );
+			}
+		}
+		
+		
+		// 高亮显示处理
 		HighlightPage<TbItem> page = solrTemplate.queryForHighlightPage(query, TbItem.class);
 		// 循环高亮入口集合(每条记录的高亮入口)
 		List<HighlightEntry<TbItem>> highlightEntryList = page.getHighlighted();
@@ -123,7 +175,7 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 		Query query = new SimpleQuery("*:*");
 		// 根据关键字查询
 		Criteria criteria = new Criteria("item_keywords").is(searchMap.get("keywords"));
-		SolrDataQuery solrDataQuery = query.addCriteria(criteria);
+		query.addCriteria(criteria);
 		// 设置分组选项
 		GroupOptions groupOptions = new GroupOptions().addGroupByField("item_category");
 		query.setGroupOptions(groupOptions);
