@@ -1,6 +1,7 @@
 package com.pinyougou.sellergoods.service.impl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.dubbo.config.annotation.Service;
@@ -100,11 +101,26 @@ public class ItemCatServiceImpl implements ItemCatService {
 		return new PageResult(page.getTotal(), page.getResult());
 	}
 
+	@Autowired
+	private RedisTemplate redisTemplate;
+	
+	/**
+	 * 通过上级id查询列表
+	 */
 	@Override
 	public List<TbItemCat> findByParentId(Long parentId) {
 		
 		TbItemCatExample example = new TbItemCatExample();
 		example.createCriteria().andParentIdEqualTo(parentId);
+		
+		// 通过商品分类名称，将模板id放入缓存中。
+		List<TbItemCat> itemCatList = findAll();
+		for (TbItemCat itemCat : itemCatList) {
+			redisTemplate.boundHashOps("itemCat").put(itemCat.getName(), itemCat.getTypeId());
+		}
+		System.out.println("缓存模板id");
+		
+		
 		return itemCatMapper.selectByExample(example);
 
 	}

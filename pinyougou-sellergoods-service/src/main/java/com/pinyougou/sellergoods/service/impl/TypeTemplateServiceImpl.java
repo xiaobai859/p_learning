@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.dubbo.config.annotation.Service;
@@ -91,7 +92,7 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 	}
 	
 	
-		@Override
+	@Override
 	public PageResult findPage(TbTypeTemplate typeTemplate, int pageNum, int pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
 		
@@ -113,31 +114,62 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 			}
 	
 		}
-		
 		Page<TbTypeTemplate> page= (Page<TbTypeTemplate>)typeTemplateMapper.selectByExample(example);		
+
+		// 品牌列表和规格列表添加到缓存
+		save2Redis();
+		
 		return new PageResult(page.getTotal(), page.getResult());
 	}
-
-		@Override
-		public List<Map> selectOptionList() {
-			return typeTemplateMapper.selectOptionList();
+	
+	@Autowired
+	private RedisTemplate redisTemplate;
+	
+	/**
+	 * @methodName:save2Redis
+	 * @description: 品牌列表和规格列表添加到缓存中
+	 * @author：Xiaobai
+	 * @createTime：2019年8月3日 下午4:38:39
+	 * @remarks: 
+	 * @resultType：void
+	 */
+	public void save2Redis() {
+		List<TbTypeTemplate> typeTemplateList = findAll();
+		for (TbTypeTemplate typeTemplate : typeTemplateList) {
+			
+			// 获取品牌列表
+			List<Map> brandList = JSON.parseArray(typeTemplate.getBrandIds(), Map.class);
+			redisTemplate.boundHashOps("brandList").put(typeTemplate.getId(), brandList);
+			
+			// 获取规格列表
+			List<Map> specList = findSpecList(typeTemplate.getId());
+			redisTemplate.boundHashOps("specList").put(typeTemplate.getId(), specList);
+			
 		}
+		System.out.println("品牌列表和规格列表添加到缓存");
+	}
+	
 
-		@Override
-		public List<Map> findSpecList(Long id) {
-			// 查询模板
-			TbTypeTemplate typeTemplate = typeTemplateMapper.selectByPrimaryKey(id);
-			String specIds = typeTemplate.getSpecIds();
-			List<Map> list = JSON.parseArray(specIds, Map.class);
-			for (Map map : list) {
-				// 查询规格选项
-				TbSpecificationOptionExample example = new TbSpecificationOptionExample();
-				example.createCriteria().andSpecIdEqualTo(new Long((Integer)map.get("id")));
-				List<TbSpecificationOption> options = specificationOptionMapper.selectByExample(example );
-				map.put("options", options);
-			}
-			return list;
+	@Override
+	public List<Map> selectOptionList() {
+		return typeTemplateMapper.selectOptionList();
+	}
+
+	@Override
+	public List<Map> findSpecList(Long id) {
+		// 根据id查询模板
+		TbTypeTemplate typeTemplate = typeTemplateMapper.selectByPrimaryKey(id);
+		String specIds = typeTemplate.getSpecIds();
+		List<Map> list = JSON.parseArray(specIds, Map.class);
+		for (Map map : list) {
+			// 查询规格选项
+			TbSpecificationOptionExample example = new TbSpecificationOptionExample();
+			example.createCriteria().andSpecIdEqualTo(new Long((Integer)map.get("id")));
+			List<TbSpecificationOption> options = specificationOptionMapper.selectByExample(example );
+			map.put("options", options);
 		}
+		return list;
+	}
 		
 		
 			
