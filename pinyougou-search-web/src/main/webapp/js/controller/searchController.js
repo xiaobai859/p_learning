@@ -1,4 +1,4 @@
-app.controller("searchController", function($scope, searchService){	
+app.controller("searchController", function($scope, $location, searchService){	
 	
 	// 定义搜索对象的结构
 	$scope.searchMap={"keywords":"","category":"", "brand":"", "spec":{}, price:"","pageNum":1, "pageSize":20, "sort":"","sortField":""};
@@ -98,6 +98,33 @@ app.controller("searchController", function($scope, searchService){
 		
 		$scope.search(); // 查询
 	} 
+	
+	// 判断关键字是否是品牌
+	$scope.keywordsIsBrand=function() {
+		for (var i = 0; i < $scope.resultMap.brandList.length; i++) {
+			if($scope.searchMap.keywords.search($scope.resultMap.brandList[i].text) == 0) { // 
+				return true;
+			}
+		}
+		return false;
+	}
+	
+			// 视频提供的方法
+			/*$scope.keywordsIsBrand=function(){
+				for(var i=0;i<$scope.resultMap.brandList.length;i++){
+					if($scope.searchMap.keywords.indexOf($scope.resultMap.brandList[i].text) != -1){ js中字符串indexOf()方法查找，当前字符串是否包含其他字符串，包含返回首次出现的索引，不包含则返回-1
+						return true;
+					}			
+				}		
+				return false;
+			}*/
+	
+	// 首页传递参数搜索
+	$scope.loadKeywords=function() {
+		$scope.searchMap.keywords=$location.search()['keywords'];
+		$scope.search(); // 查询
+	}
+
 	
 
 	

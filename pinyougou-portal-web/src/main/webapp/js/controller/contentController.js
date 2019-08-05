@@ -13,5 +13,13 @@ app.controller("contentController", function($scope, contentService) {
 		);
 	}
 	
+	/**
+	 * 根据关键字搜索（实际将关键字传递到搜索页进行搜索）
+	 */
+	
+	$scope.search=function() {
+		location.href="http://localhost:9104/search.html#?keywords=" + $scope.keywords;
+	}
+	
 	
 });

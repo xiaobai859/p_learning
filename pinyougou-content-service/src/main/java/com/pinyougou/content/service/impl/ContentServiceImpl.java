@@ -13,6 +13,7 @@ import com.pinyougou.mapper.TbContentMapper;
 import com.pinyougou.pojo.TbContent;
 import com.pinyougou.pojo.TbContentExample;
 import com.pinyougou.pojo.TbContentExample.Criteria;
+import com.pinyougou.pojo.TbItem;
 import com.pinyougou.content.service.ContentService;
 
 import entity.PageResult;
@@ -161,5 +162,6 @@ public class ContentServiceImpl implements ContentService {
 		return list;
 
 	}
+
 	
 }

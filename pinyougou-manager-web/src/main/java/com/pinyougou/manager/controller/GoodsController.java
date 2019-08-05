@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.TbGoods;
+import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojogroup.Goods;
+import com.pinyougou.search.service.ItemSearchService;
 import com.pinyougou.sellergoods.service.GoodsService;
 
 import entity.PageResult;
@@ -117,6 +119,9 @@ public class GoodsController {
 		return goodsService.findPage(goods, page, rows);		
 	}
 	
+	@Reference
+	private ItemSearchService itemSearchService;
+	
 	/**
 	 * @methodName:updateStatus
 	 * @description: 更新商品状态
@@ -130,7 +135,15 @@ public class GoodsController {
 	@RequestMapping("/updateStatus")
 	public Result updateStatus(Long[] ids, String status) {
 		try {
+			
 			goodsService.updateStatus(ids, status);
+			if("1".equals(status)) {
+				// 获得导入的SKU列表
+				List<TbItem> itemList = goodsService.findItemListByGoodsIdListAndStatus(ids, status);
+				// 导入到solr
+				itemSearchService.importList(itemList);
+			}
+			
 			return new Result(true, "更新成功");
 		} catch (Exception e) {
 			e.printStackTrace();

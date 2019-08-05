@@ -1,6 +1,7 @@
 package com.pinyougou.sellergoods.service;
 import java.util.List;
 import com.pinyougou.pojo.TbGoods;
+import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojogroup.Goods;
 
 import entity.PageResult;
@@ -80,5 +81,17 @@ public interface GoodsService {
 	 * @resultType：void
 	 */
 	public void goodsMark(Long[] ids, String isMarketable);
+	
+	/**
+	 * @methodName:findItemListByGoodsIdListAndStatus
+	 * @description: 根据SPU的id查询SKU列表
+	 * @author：Xiaobai
+	 * @createTime：2019年8月5日 下午4:03:02
+	 * @remarks: @param ids
+	 * @remarks: @param status
+	 * @remarks: @return
+	 * @resultType：List<TbItem>
+	 */
+	public List<TbItem> findItemListByGoodsIdListAndStatus(Long[] ids, String status);
 	
 }

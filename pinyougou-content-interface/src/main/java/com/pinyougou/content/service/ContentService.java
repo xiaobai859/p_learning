@@ -1,6 +1,7 @@
 package com.pinyougou.content.service;
 import java.util.List;
 import com.pinyougou.pojo.TbContent;
+import com.pinyougou.pojo.TbItem;
 
 import entity.PageResult;
 /**
@@ -68,5 +69,7 @@ public interface ContentService {
 	 * @resultType：List<TbContent>
 	 */
 	public List<TbContent> findByCategoryId(Long categoryId);
+	
+	
 	
 }
