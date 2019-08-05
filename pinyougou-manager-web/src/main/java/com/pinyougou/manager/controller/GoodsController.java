@@ -148,6 +148,7 @@ public class GoodsController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new Result(false,"更新失败");
+			
 		}
 	}
 	

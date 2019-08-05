@@ -25,5 +25,15 @@ public interface ItemSearchService {
 	 * @resultType：void
 	 */
 	public void importList(List list);
+	
+	/**
+	 * @methodName:deleteByGoodsIds
+	 * @description: 商品删除
+	 * @author：Xiaobai
+	 * @createTime：2019年8月5日 下午6:30:55
+	 * @remarks: @param list
+	 * @resultType：void
+	 */
+	public void deleteByGoodsIds(List list);
 
 }
