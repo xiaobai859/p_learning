@@ -1,4 +1,5 @@
 package com.pinyougou.manager.controller;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -100,6 +101,7 @@ public class GoodsController {
 	public Result delete(Long [] ids){
 		try {
 			goodsService.delete(ids);
+			itemSearchService.deleteByGoodsIds(Arrays.asList(ids)); // 从索引库中删除
 			return new Result(true, "删除成功"); 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -109,7 +111,7 @@ public class GoodsController {
 	
 	/**
 	 * 查询+分页
-	 * @param brand
+	 * @param goods
 	 * @param page
 	 * @param rows
 	 * @return

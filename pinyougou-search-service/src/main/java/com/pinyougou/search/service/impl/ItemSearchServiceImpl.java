@@ -274,7 +274,7 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 		
 		System.out.println("删除商品ID"+list);
 		SolrDataQuery query = new SimpleQuery();
-		Criteria criteria = new Criteria("item_goodsids").in(list);
+		Criteria criteria = new Criteria("item_goodsid").in(list);
 		query.addCriteria(criteria );
 		solrTemplate.delete(query );
 		solrTemplate.commit();
