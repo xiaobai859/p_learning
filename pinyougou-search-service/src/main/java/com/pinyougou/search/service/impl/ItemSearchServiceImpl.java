@@ -2,16 +2,15 @@ package com.pinyougou.search.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.Criteria;
-import org.springframework.data.solr.core.query.Crotch;
 import org.springframework.data.solr.core.query.FilterQuery;
 import org.springframework.data.solr.core.query.GroupOptions;
 import org.springframework.data.solr.core.query.HighlightOptions;
@@ -26,7 +25,6 @@ import org.springframework.data.solr.core.query.result.GroupResult;
 import org.springframework.data.solr.core.query.result.HighlightEntry;
 import org.springframework.data.solr.core.query.result.HighlightEntry.Highlight;
 import org.springframework.data.solr.core.query.result.HighlightPage;
-import org.springframework.data.solr.core.query.result.ScoredPage;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.pinyougou.pojo.TbItem;
@@ -41,7 +39,10 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 	@Override
 	public Map search(Map searchMap) {
 		Map map = new HashMap<>();
-
+		// 去除搜索关键字中存在空格
+		String keywords = (String) searchMap.get("keywords");
+		searchMap.put("keywords", keywords.replace(" ", ""));
+		
 		// 查询列表
 		map.putAll(searchList(searchMap));
 		// 分组查询
@@ -136,6 +137,38 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 			}
 		}
 		
+		// 分页
+		Integer pageNum =  (Integer) searchMap.get("pageNum"); // 页码
+		if(pageNum == null) {
+			pageNum = 1;
+		}
+		
+		Integer pageSize = (Integer) searchMap.get("pageSize"); // 每页显示的条数
+		if (pageSize == null) {
+			pageSize = 20;
+		}
+		
+		query.setOffset((pageNum - 1) * pageSize); // 设置初始查询数
+		query.setRows(pageSize); // 设置每页显示条数
+		
+		
+		// 排序
+		String sortValue = (String) searchMap.get("sort"); // 排序方式：升序ASC 降序DESC
+		String sortField = (String) searchMap.get("sortField"); // 需要排序的字段
+		System.out.println(sortField);
+		
+		if(sortValue != null && !sortValue.equals("")) { // 根据排序方式进行排序
+			if("ASC".equals(sortValue)) { // 采用升序方式
+				Sort sort = new Sort(Sort.Direction.ASC, "item_" + sortField);
+				query.addSort(sort);
+			}
+			if("DESC".equals(sortValue)) { // 采用降序方式
+				Sort sort = new Sort(Sort.Direction.DESC, "item_" + sortField);
+				query.addSort(sort);
+			}
+		}
+		
+		
 		
 		// 高亮显示处理
 		HighlightPage<TbItem> page = solrTemplate.queryForHighlightPage(query, TbItem.class);
@@ -157,6 +190,9 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 			}
 		}
 		map.put("rows", page.getContent());
+		map.put("totalPages", page.getTotalPages()); // 返回总页数
+		map.put("total", page.getTotalElements()); // 返回总记录数
+
 		return map;	
 	}
 
