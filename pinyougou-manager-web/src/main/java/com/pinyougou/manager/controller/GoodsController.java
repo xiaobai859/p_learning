@@ -1,17 +1,21 @@
 package com.pinyougou.manager.controller;
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.pinyougou.page.service.ItemPageService;
 import com.pinyougou.pojo.TbGoods;
 import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojogroup.Goods;
 import com.pinyougou.search.service.ItemSearchService;
 import com.pinyougou.sellergoods.service.GoodsService;
+
 import entity.PageResult;
 import entity.Result;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 /**
  * controller
  * @author Administrator
@@ -148,6 +152,22 @@ public class GoodsController {
 			return new Result(false,"更新失败");
 			
 		}
+	}
+	
+	@Reference
+	private ItemPageService itemPageService;
+	
+	/**
+	 * @methodName:genHtml
+	 * @description: 生成静态页测试
+	 * @author：Xiaobai
+	 * @createTime：2019年8月6日 下午2:48:00
+	 * @remarks: @param goodsId
+	 * @resultType：void
+	 */
+	@RequestMapping("/genHtml")
+	public void genHtml(Long goodsId) {
+		itemPageService.genItemHtml(goodsId);
 	}
 	
 }
