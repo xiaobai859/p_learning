@@ -140,11 +140,16 @@ public class GoodsController {
 		try {
 			
 			goodsService.updateStatus(ids, status);
-			if("1".equals(status)) {
+			if("1".equals(status)) { // 商品审核通过
 				// 获得导入的SKU列表
 				List<TbItem> itemList = goodsService.findItemListByGoodsIdListAndStatus(ids, status);
 				// 导入到solr
 				itemSearchService.importList(itemList);
+				
+				// 生成商品详情页
+				for (Long goodsId : ids) {
+					itemPageService.genItemHtml(goodsId);
+				}
 			}
 			
 			return new Result(true, "更新成功");
