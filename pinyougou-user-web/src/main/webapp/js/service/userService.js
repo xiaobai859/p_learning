@@ -34,4 +34,5 @@ app.service('userService',function($http){
 	this.sendCheckCode=function(phone) {
 		return $http.get("../user/sendCheckCode.do?phone=" + phone);
 	}
+	
 });
