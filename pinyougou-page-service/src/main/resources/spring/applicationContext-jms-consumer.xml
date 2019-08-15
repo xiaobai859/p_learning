@@ -4,7 +4,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans   
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context   
-		http://www.springframework.org/schema/context/spring-context.xsd">
+		http://www.springframework.org/schema/context/spring-context.xsd
+		">
 	
     <!-- 真正可以产生Connection的ConnectionFactory，由对应的 JMS服务厂商提供-->  
 	<bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">  

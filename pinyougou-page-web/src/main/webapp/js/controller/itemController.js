@@ -1,4 +1,4 @@
-app.controller("itemController", function($scope) {
+app.controller("itemController", function($scope, $http) {
 	
 	// $scope.num = 1; 页面init初始化了，这里无需设置
 	
@@ -62,9 +62,24 @@ app.controller("itemController", function($scope) {
 		
 	}
 	
-	// 添加购物车，将sku的id弹出来
+	// 添加购物车，
 	$scope.addSkuToCart = function() {
-		alert("SKUID:" + $scope.sku.id);
+		// alert("SKUID:" + $scope.sku.id);
+		
+			$http.get("http://localhost:9107/cart/addGoodsToCartList.do?itemId=" + 
+					$scope.sku.id + "&num=" + $scope.num, {'withCredentials':true}).success(
+				function(response) {
+					if(response.success) {
+						// 添加成功跳转到购物车页面
+						location.href="http://localhost:9107/cart.html";
+					} else {
+						alert(response.message);
+					}
+					
+				}
+			
+			);
+		
 	}
 	
 	
