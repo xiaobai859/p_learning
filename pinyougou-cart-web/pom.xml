@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.pinyougou</groupId>
@@ -119,12 +119,12 @@
 
 	<dependency>
 		<groupId>com.pinyougou</groupId>
-		<artifactId>pinyougou-cart-interface</artifactId>
+		<artifactId>pinyougou-common</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</dependency>
 	<dependency>
 		<groupId>com.pinyougou</groupId>
-		<artifactId>pinyougou-common</artifactId>
+		<artifactId>pinyougou-cart-interface</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</dependency>
 	<dependency>
@@ -135,6 +135,11 @@
 	<dependency>
 		<groupId>com.pinyougou</groupId>
 		<artifactId>pinyougou-order-interface</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>com.pinyougou</groupId>
+		<artifactId>pinyougou-pay-interface</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</dependency>
   </dependencies>
