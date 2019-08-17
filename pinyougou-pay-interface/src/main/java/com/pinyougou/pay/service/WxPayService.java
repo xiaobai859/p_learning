@@ -30,4 +30,16 @@ public interface WxPayService {
 	public Map<String, String> queryPayStatus(String out_trade_no);
 	
 	
+	/**
+	 * @methodName:closePay
+	 * @description: 关闭订单
+	 * @author：Xiaobai
+	 * @createTime：2019年8月17日 上午10:41:44
+	 * @remarks: @param out_trade_no
+	 * @remarks: @return
+	 * @resultType：Map<String,String>
+	 */
+	public Map<String, String> closePay(String out_trade_no);
+	
+	
 }
