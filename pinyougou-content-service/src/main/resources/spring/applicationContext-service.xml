@@ -11,8 +11,7 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <dubbo:protocol name="dubbo" port="20882"></dubbo:protocol>
-	<dubbo:application name="pinyougou-content-service"/>  
-    <dubbo:registry address="zookeeper://192.168.25.128:2181"/>
+	<dubbo:application name="pinyougou-content-service"/>
     <dubbo:annotation package="com.pinyougou.content.service.impl" />
     <dubbo:provider timeout="20000" />
    
