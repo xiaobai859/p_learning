@@ -32,7 +32,7 @@ app.controller('contentController' ,function($scope, $controller, contentService
 	}
 	
 	//保存 
-	$scope.save=function(){				
+	$scope.save=function(){
 		var serviceObject;//服务层对象  				
 		if($scope.entity.id!=null){//如果有ID
 			serviceObject=contentService.update( $scope.entity ); //修改  
