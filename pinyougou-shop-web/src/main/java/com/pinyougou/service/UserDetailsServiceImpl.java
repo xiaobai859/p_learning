@@ -41,7 +41,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		
 		TbSeller seller = sellerService.findOne(username);
 		if(seller != null && seller.getStatus().equals("1")) {
-			return new User(username, seller.getPassword(), authorities);			
+			return new user(username, seller.getPassword(), authorities);			
 		} else return null;
 		
 	}
