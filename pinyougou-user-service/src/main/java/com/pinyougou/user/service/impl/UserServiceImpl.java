@@ -199,7 +199,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean checkCodeIsTrue(String phone, String checkCode) {
-		// 从redis去除验证码与用户输入的进行判断
+		// 从redis取出验证码与用户输入的进行判断
 		String redisCheckCode = (String) redisTemplate.boundHashOps("checkCode").get(phone);
 		
 		if(checkCode.equals(redisCheckCode)) {
