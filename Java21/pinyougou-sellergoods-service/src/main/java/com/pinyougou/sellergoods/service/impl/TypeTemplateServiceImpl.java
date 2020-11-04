@@ -1,12 +1,5 @@
 package com.pinyougou.sellergoods.service.impl;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
@@ -19,8 +12,13 @@ import com.pinyougou.pojo.TbTypeTemplate;
 import com.pinyougou.pojo.TbTypeTemplateExample;
 import com.pinyougou.pojo.TbTypeTemplateExample.Criteria;
 import com.pinyougou.sellergoods.service.TypeTemplateService;
-
 import entity.PageResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 服务实现层
@@ -76,7 +74,7 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
    * 根据ID获取实体
    *
    * @param id
-   * @return
+   * @return TbTypeTemplate
    */
   @Override
   public TbTypeTemplate findOne(Long id) {
@@ -143,6 +141,7 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
       // 获取品牌列表
       List<Map> brandList = JSON.parseArray(typeTemplate.getBrandIds(), Map.class);
       redisTemplate.boundHashOps("brandList").put(typeTemplate.getId(), brandList);
+
 
       // 获取规格列表
       List<Map> specList = findSpecList(typeTemplate.getId());
